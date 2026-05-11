@@ -15,7 +15,7 @@ const AdminPanel = () => {
     setIsLoading(true);
     try {
       // Endpoint untuk mengambil semua jadwal (dari semua dokter)
-      const response = await axios.get('http://localhost:8080/api/jadwal');
+      const response = await axios.get('https://sirs-backend.onrender.com/api/jadwal');
       setJadwal(response.data.data || []);
     } catch (error) {
       console.error("Gagal mengambil data jadwal:", error);
@@ -33,7 +33,7 @@ const AdminPanel = () => {
     if (!window.confirm("Yakin ingin menyetujui jadwal ini?")) return;
 
     try {
-      await axios.put(`http://localhost:8080/api/jadwal/${id}/status`, {
+      await axios.put(`https://sirs-backend.onrender.com/api/jadwal/${id}/status`, {
         status_jadwal: 'Confirmed'
       });
       alert(`Jadwal ID ${id} berhasil DISETUJUI.`);
@@ -56,7 +56,7 @@ const AdminPanel = () => {
     }
 
     try {
-      await axios.put(`http://localhost:8080/api/jadwal/${selectedId}/status`, {
+      await axios.put(`https://sirs-backend.onrender.com/api/jadwal/${selectedId}/status`, {
         status_jadwal: 'Rejected',
         catatan: rejectionReason // Opsional: jika database Anda ingin menyimpan alasannya
       });

@@ -10,7 +10,7 @@ const MonitorAntrean = () => {
   // Polling data dari Backend
   const fetchAntrean = async () => {
     try {
-      const response = await axios.get(`http://localhost:8080/api/monitor/antrean/${idJadwal}`);
+      const response = await axios.get(`https://sirs-backend.onrender.com/api/monitor/antrean/${idJadwal}`);
       setAntrean(response.data.data);
     } catch (error) {
       console.error("Gagal memuat data", error);

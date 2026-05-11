@@ -29,7 +29,7 @@ const FrontOffice = () => {
     // Ambil jadwal dokter yang aktif untuk dropdown
     const fetchSchedules = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/jadwal'); // Sesuaikan route backend kamu
+        const response = await axios.get('https://sirs-backend.onrender.com/api/jadwal'); // Sesuaikan route backend kamu
         setActiveSchedules(response.data.data || []);
       } catch (error) {
         console.error("Gagal mengambil jadwal:", error);
@@ -47,7 +47,7 @@ const FrontOffice = () => {
     
     setIsLoading(true);
     try {
-      await axios.post('http://localhost:8080/api/pasien', {
+      await axios.post('https://sirs-backend.onrender.com/api/pasien', {
         nama_pasien: regForm.nama_pasien,
         no_hp: regForm.no_hp,
         tipe_pasien: 'Pasien Baru'
@@ -73,7 +73,7 @@ const FrontOffice = () => {
     setIsLoading(true);
     try {
       // Kirim data ke backend untuk generate antrean
-      const response = await axios.post('http://localhost:8080/api/booking', {
+      const response = await axios.post('https://sirs-backend.onrender.com/api/booking', {
         nomor_rekam_medis: bookingData.nomor_rekam_medis,
         id_jadwal: parseInt(bookingData.id_jadwal),
         status_booking: 'Menunggu'

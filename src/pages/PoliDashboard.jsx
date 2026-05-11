@@ -28,7 +28,7 @@ const PoliDashboard = () => {
   const fetchAntrean = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get(`http://localhost:8080/api/monitor/antrean/${idJadwal}`);
+      const response = await axios.get(`https://sirs-backend.onrender.com/api/monitor/antrean/${idJadwal}`);
       if (response.data && response.data.data) {
         setAntrean(response.data.data);
       }
@@ -41,7 +41,7 @@ const PoliDashboard = () => {
 
   const updateStatus = async (idBooking, statusBaru) => {
     try {
-      await axios.put(`http://localhost:8080/api/booking/${idBooking}/status`, { status_booking: statusBaru });
+      await axios.put(`https://sirs-backend.onrender.com/api/booking/${idBooking}/status`, { status_booking: statusBaru });
       fetchAntrean();
     } catch (error) {
       alert(`Gagal Update! Cek koneksi backend.`);

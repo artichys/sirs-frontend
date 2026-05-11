@@ -9,7 +9,7 @@ const DashboardManajemen = () => {
   const fetchLaporan = async () => {
     try {
       // Menarik laporan untuk bulan 05 tahun 2026 (Bisa dibuat dinamis dengan input filter jika mau)
-      const response = await axios.get('http://localhost:8080/api/laporan/utilisasi?bulan=05&tahun=2026');
+      const response = await axios.get('https://sirs-backend.onrender.com/api/laporan/utilisasi?bulan=05&tahun=2026');
       setLaporan(response.data.data);
       setLoading(false);
     } catch (error) {

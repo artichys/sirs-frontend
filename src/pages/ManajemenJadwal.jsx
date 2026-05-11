@@ -14,7 +14,7 @@ const ManajemenJadwal = () => {
 
   const fetchJadwal = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/api/jadwal');
+      const response = await axios.get('https://sirs-backend.onrender.com/api/jadwal');
       setDaftarJadwal(response.data.data);
     } catch (error) {
       console.error("Gagal menarik data jadwal", error);
@@ -29,7 +29,7 @@ const ManajemenJadwal = () => {
   const handlePengajuan = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:8080/api/jadwal', {
+      await axios.post('https://sirs-backend.onrender.com/api/jadwal', {
         id_dokter: parseInt(idDokter),
         id_ruangan: parseInt(idRuangan),
         tanggal: tanggal,
@@ -46,7 +46,7 @@ const ManajemenJadwal = () => {
   // Fungsi Admin Validasi Jadwal
   const handleApprove = async (idJadwal) => {
     try {
-      await axios.put(`http://localhost:8080/api/jadwal/${idJadwal}/approve`);
+      await axios.put(`https://sirs-backend.onrender.com/api/jadwal/${idJadwal}/approve`);
       alert("Jadwal berhasil divalidasi!");
       fetchJadwal(); // Refresh tabel
     } catch (error) {

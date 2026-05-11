@@ -24,7 +24,7 @@ const DoctorPortal = () => {
     setIsFetching(true);
     try {
       // Asumsi route backend Anda untuk mengambil jadwal dokter
-      const response = await axios.get(`http://localhost:8080/api/jadwal/dokter/${idDokter}`);
+      const response = await axios.get(`https://sirs-backend.onrender.com/api/jadwal/dokter/${idDokter}`);
       setRiwayat(response.data.data || []);
     } catch (error) {
       console.error("Gagal mengambil riwayat pengajuan:", error);
@@ -49,7 +49,7 @@ const DoctorPortal = () => {
     setIsLoading(true);
     try {
       // Asumsi route backend Anda untuk membuat jadwal baru
-      await axios.post('http://localhost:8080/api/jadwal', {
+      await axios.post('https://sirs-backend.onrender.com/api/jadwal', {
         id_dokter: idDokter,
         id_ruangan: parseInt(formData.id_ruangan),
         tanggal: formData.tanggal,
