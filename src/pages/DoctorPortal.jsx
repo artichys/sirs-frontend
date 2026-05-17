@@ -18,6 +18,7 @@ const DoctorPortal = () => {
   const [riwayat, setRiwayat] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
+  const [isWeekly, setIsWeekly] = useState(false);
 
   // --- FETCH DATA RIWAYAT DARI BACKEND ---
   const fetchRiwayat = async () => {
@@ -39,38 +40,53 @@ const DoctorPortal = () => {
   }, []);
 
   // --- KIRIM PENGAJUAN KE BACKEND ---
-  const handleSubmit = async (e, status) => {
-    e.preventDefault();
-    if (!formData.id_ruangan || !formData.tanggal || !formData.jamMulai || !formData.jamSelesai) {
-      alert("Mohon lengkapi data jadwal (Ruangan, Tanggal, Jam).");
-      return;
-    }
+const handleSubmit = async (e, status) => {
+  e.preventDefault();
+  
+  // Validasi dasar
+  if (!formData.id_ruangan || !formData.tanggal || !formData.jamMulai || !formData.jamSelesai) {
+    alert("Mohon lengkapi data jadwal.");
+    return;
+  }
 
-    setIsLoading(true);
-    try {
-      // Asumsi route backend Anda untuk membuat jadwal baru
-      await axios.post('https://sirs-backend.onrender.com/api/jadwal', {
+  setIsLoading(true);
+  try {
+    const baseUrl = 'https://sirs-backend.onrender.com/api/jadwal';
+    
+    if (isWeekly) {
+      // MODE MINGGUAN: Tembak endpoint /mingguan
+      await axios.post(`${baseUrl}/mingguan`, {
+        id_dokter: idDokter,
+        id_ruangan: parseInt(formData.id_ruangan),
+        start_date: formData.tanggal, // Tanggal dipilih jadi tanggal mulai
+        jam_mulai: formData.jamMulai + ":00",
+        jam_selesai: formData.jamSelesai + ":00",
+        durasi_hari: 7, // Langsung set 7 hari
+        status_jadwal: status,
+        catatan: formData.catatan
+      });
+    } else {
+      // MODE HARIAN: Tetap seperti yang lama
+      await axios.post(baseUrl, {
         id_dokter: idDokter,
         id_ruangan: parseInt(formData.id_ruangan),
         tanggal: formData.tanggal,
-        jam_mulai: formData.jamMulai + ":00", // Format standar MySQL time (HH:MM:SS)
+        jam_mulai: formData.jamMulai + ":00",
         jam_selesai: formData.jamSelesai + ":00",
-        status_jadwal: status, // 'Draft' atau 'Pending'
+        status_jadwal: status,
         catatan: formData.catatan
       });
-
-      alert(`Pengajuan berhasil dikirim dengan status: ${status}`);
-      
-      // Reset Form & Refresh Tabel
-      setFormData({ id_ruangan: '', tanggal: '', jamMulai: '', jamSelesai: '', catatan: '' });
-      fetchRiwayat();
-      
-    } catch (error) {
-      alert("Gagal mengirim pengajuan: " + (error.response?.data?.message || error.message));
-    } finally {
-      setIsLoading(false);
     }
-  };
+
+    alert(`Pengajuan ${isWeekly ? 'Mingguan' : 'Harian'} Berhasil!`);
+    setFormData({ id_ruangan: '', tanggal: '', jamMulai: '', jamSelesai: '', catatan: '' });
+    fetchRiwayat();
+  } catch (error) {
+    alert("Gagal: " + (error.response?.data?.error || error.message));
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen w-full bg-[#f4f7f9] flex font-sans text-slate-800">
@@ -148,6 +164,22 @@ const DoctorPortal = () => {
                 <h2 className="text-2xl font-black text-[#0d3b66] tracking-tight">Pengajuan Jadwal Praktik</h2>
               </div>
 
+            <div className="flex bg-slate-100 p-1 rounded-2xl mb-8 w-fit">
+              <button
+                type="button"
+                onClick={() => setIsWeekly(false)}
+                className={`px-6 py-2 rounded-xl text-sm font-bold transition ${!isWeekly ? 'bg-white shadow-sm text-[#0052cc]' : 'text-slate-500'}`}
+              >
+                Harian
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsWeekly(true)}
+                className={`px-6 py-2 rounded-xl text-sm font-bold transition ${isWeekly ? 'bg-white shadow-sm text-[#0052cc]' : 'text-slate-500'}`}
+              >
+                Mingguan (7 Hari)
+              </button>
+            </div>
               <form className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
@@ -164,15 +196,25 @@ const DoctorPortal = () => {
                       <option value="3">Poliklinik Bedah B - Lt. 2</option>
                     </select>
                   </div>
+
                   <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">Date Picker</label>
+                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">
+                      {isWeekly ? 'Tanggal Mulai (Start Date)' : 'Date Picker'}
+                    </label>
                     <input 
                       type="date" 
                       value={formData.tanggal}
                       onChange={(e) => setFormData({...formData, tanggal: e.target.value})}
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white"
                     />
+                    {/* Opsional: Tambahkan info tambahan jika mode mingguan aktif */}
+                    {isWeekly && (
+                      <p className="text-[10px] text-blue-500 font-bold mt-2 ml-1 uppercase tracking-wider">
+                        * Jadwal akan dibuat otomatis untuk 7 hari ke depan
+                      </p>
+                    )}
                   </div>
+                  
                   <div>
                     <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">Start Time</label>
                     <input 
